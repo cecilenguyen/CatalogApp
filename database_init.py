@@ -8,6 +8,12 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind = engine)
 session = DBSession()
 
+# Delete Categories if exisitng.
+session.query(Category).delete()
+# Delete Items if exisitng.
+session.query(Item).delete()
+
+
 # add categories
 Category1 = Category(id=1, name="Soccer")
 session.add(Category1)
@@ -22,7 +28,7 @@ session.add(Category3)
 session.commit()
 
 # add items for soccer
-item1 = Category(
+item1 = Item(
 	            name="Soccer ball",
 	            category_id="1",
 	            description="Basic ball for kicking around the field.",
@@ -30,7 +36,7 @@ item1 = Category(
 session.add(item1)
 session.commit()
 
-item2 = Category(
+item2 = Item(
 	            name="Cleats",
 	            category_id="1",
 	            description="Great shoes for running and grip.",
@@ -38,7 +44,7 @@ item2 = Category(
 session.add(item2)
 session.commit()
 
-item3 = Category( 
+item3 = Item( 
 	            name="Soccer uniform",
 	            category_id="1",
 	            description="Includes shirt and shorts with team logo and colors.",
@@ -47,7 +53,7 @@ session.add(item3)
 session.commit()
 
 # add items for football
-item4 = Category(
+item4 = Item(
 	            name="Football",
 	            category_id="2",
 	            description="Basic football for playing in the backyard or field",
@@ -55,7 +61,7 @@ item4 = Category(
 session.add(item4)
 session.commit()
 
-item5 = Category(
+item5 = Item(
 	            name="Jersey",
 	            category_id="2",
 	            description="Limited edition jersey for local team.",
@@ -63,7 +69,7 @@ item5 = Category(
 session.add(item5)
 session.commit()
 
-item6 = Category(
+item6 = Item(
 	            name="Helmet",
 	            category_id="2",
 	            description="Provides extra head and facial protection for high impact tackles.",
@@ -72,7 +78,7 @@ session.add(item6)
 session.commit()
 
 # add items for ice skating
-item7 = Category(
+item7 = Item(
 	            name="Skates",
 	            category_id="3",
 	            description="Razor sharp blades for perfect spins and balance.",
@@ -80,7 +86,7 @@ item7 = Category(
 session.add(item7)
 session.commit()
 
-item8 = Category(
+item8 = Item(
 	            name="Leotard",
 	            category_id="3",
 	            description="Fashionable leotard with skirt with minimal wind resistance and ultimate stretch",
@@ -88,7 +94,7 @@ item8 = Category(
 session.add(item8)
 session.commit()
 
-item9 = Category(
+item9 = Item(
 	            name="Jacket",
 	            category_id="3",
 	            description="Chill proof jacket for waiting on the sidelines.",
