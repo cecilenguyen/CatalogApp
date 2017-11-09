@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+{% block content %}
+<!-- main content -->
+<section class="container">
+	<!-- list all categories -->
+	<div class="col-md-4 leftCol">
+		<h2>Categories</h2>
+		{% for cat in category %}
+		<h3>{{ cat.name }}</h3>
+		{% endfor %}
+	</div>
+
+	<!-- list latest items -->
+	<div class="col-md-8 rightCol">
+		<h2>Latest Items</h2>
+		{% for i in item %}
+		<h3>{{ i.name }}</h3>
+		{% endfor %}
+	</div>
+</section>
+
+{% endblock %}
