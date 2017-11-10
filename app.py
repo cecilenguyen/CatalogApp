@@ -1,5 +1,5 @@
 # create flask app
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 app = Flask(__name__)
 
 # add database to application
@@ -45,6 +45,7 @@ def addCategory():
         newCategory = Category(name = request.form['name'])
         session.add(newCategory)
         session.commit()
+        flash("Successfully added category!")
         return redirect(url_for('getCatalog'))
     else:
         return render_template('addCategory.html')
@@ -52,17 +53,21 @@ def addCategory():
 # add an item
 @app.route('/catalog/addItem', methods=['GET','POST'])
 def addItem():
-    print()
-    # item5 = Item(
-    #             name="Jersey",
-    #             category_id="2",
-    #             description="Limited edition jersey for local team.",
-    #             date=datetime.datetime.now())
-    # session.add(item5)
-    # session.commit()
+    if request.method == 'POST':
+        newItem = Item(name = request.form['name'],
+                        category = session.query(Category).filter_by(name=request.form['category']).first(),
+                        description = request.form['description'])
+        session.add(newItem)
+        session.commit()
+        flash("Successfully added item!")
+        return redirect(url_for('getCatalog'))
+    else:
+        return render_template('addItem.html')
+
 ####### Add routes #######
 
 
 if __name__ == '__main__':
+    app.secret_key = 'super_secret_key'
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)

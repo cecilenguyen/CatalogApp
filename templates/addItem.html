@@ -1,0 +1,18 @@
+{% extends "index.html" %}
+{% block content %}
+<h2>Add item</h2>
+<div class="container well">
+  <form method = "post">
+    <div class="form-group">
+      <label>Name:</label>
+      <input type ="text" class="form-control" name="name">
+      <label>Category:</label>
+      <input type ="text" class="form-control" name="category">
+      <label>Description:</label>
+      <input type ="text" class="form-control" name="description">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+</div>
+
+{% endblock %}

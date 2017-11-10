@@ -31,24 +31,21 @@ session.commit()
 item1 = Item(
 	            name="Soccer ball",
 	            category_id="1",
-	            description="Basic ball for kicking around the field.",
-	            date=datetime.datetime.now())
+	            description="Basic ball for kicking around the field.")
 session.add(item1)
 session.commit()
 
 item2 = Item(
 	            name="Cleats",
 	            category_id="1",
-	            description="Great shoes for running and grip.",
-	            date=datetime.datetime.now())
+	            description="Great shoes for running and grip.")
 session.add(item2)
 session.commit()
 
 item3 = Item( 
 	            name="Soccer uniform",
 	            category_id="1",
-	            description="Includes shirt and shorts with team logo and colors.",
-	            date=datetime.datetime.now())
+	            description="Includes shirt and shorts with team logo and colors.")
 session.add(item3)
 session.commit()
 
@@ -56,24 +53,21 @@ session.commit()
 item4 = Item(
 	            name="Football",
 	            category_id="2",
-	            description="Basic football for playing in the backyard or field",
-	            date=datetime.datetime.now())
+	            description="Basic football for playing in the backyard or field")
 session.add(item4)
 session.commit()
 
 item5 = Item(
 	            name="Jersey",
 	            category_id="2",
-	            description="Limited edition jersey for local team.",
-	            date=datetime.datetime.now())
+	            description="Limited edition jersey for local team.")
 session.add(item5)
 session.commit()
 
 item6 = Item(
 	            name="Helmet",
 	            category_id="2",
-	            description="Provides extra head and facial protection for high impact tackles.",
-	            date=datetime.datetime.now())
+	            description="Provides extra head and facial protection for high impact tackles.")
 session.add(item6)
 session.commit()
 
@@ -81,23 +75,20 @@ session.commit()
 item7 = Item(
 	            name="Skates",
 	            category_id="3",
-	            description="Razor sharp blades for perfect spins and balance.",
-	            date=datetime.datetime.now())
+	            description="Razor sharp blades for perfect spins and balance.")
 session.add(item7)
 session.commit()
 
 item8 = Item(
 	            name="Leotard",
 	            category_id="3",
-	            description="Fashionable leotard with skirt with minimal wind resistance and ultimate stretch",
-	            date=datetime.datetime.now())
+	            description="Fashionable leotard with skirt with minimal wind resistance and ultimate stretch")
 session.add(item8)
 session.commit()
 
 item9 = Item(
 	            name="Jacket",
 	            category_id="3",
-	            description="Chill proof jacket for waiting on the sidelines.",
-	            date=datetime.datetime.now())
+	            description="Chill proof jacket for waiting on the sidelines.")
 session.add(item9)
 session.commit()
