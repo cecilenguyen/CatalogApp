@@ -1,5 +1,5 @@
 # create flask app
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 app = Flask(__name__)
 
 # add database to application
@@ -41,10 +41,13 @@ def getItem(category, item):
 # add a category
 @app.route('/catalog/addCategory', methods=['GET','POST'])
 def addCategory():
-    print()
-    # category = Category(id=1, name="Soccer")
-    # session.add(category)
-    # session.commit()
+    if request.method == 'POST':
+        newCategory = Category(name = request.form['name'])
+        session.add(newCategory)
+        session.commit()
+        return redirect(url_for('getCatalog'))
+    else:
+        return render_template('addCategory.html')
 
 # add an item
 @app.route('/catalog/addItem', methods=['GET','POST'])
