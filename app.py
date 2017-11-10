@@ -15,7 +15,7 @@ session = DBSession()
 
 # homepage
 @app.route('/')
-@app.route('/catalog')
+@app.route('/catalog/')
 def getCatalog():
     category = session.query(Category)
     item = session.query(Item).order_by(desc(Item.date)).limit(5)
@@ -24,25 +24,17 @@ def getCatalog():
 # get all items for specific category
 @app.route('/catalog/<path:category>')
 def getCategory(category):
+    categories = session.query(Category)
     category = session.query(Category).filter_by(name=category).first()
     items = session.query(Item).filter_by(category_id = category.id)
-    output = ''
-    for i in items:
-        output += i.name
-        output += '</br>'
-    return output
-    
+    return render_template('items.html', categories=categories, category=category, items=items)
 
 # get single item
 @app.route('/catalog/<path:category>/<path:item>')
 def getItem(category, item):
     category = session.query(Category).filter_by(name=category).first()
     item = session.query(Item).filter_by(category_id=category.id, name=item).first()
-    output = ''
-    output += item.name + '</br>'
-    output += item.description
-    return output
-
+    return render_template('item.html', category=category, item=item)
 
 ####### Add routes #######
 

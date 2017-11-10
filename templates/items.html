@@ -5,18 +5,18 @@
 	<!-- list all categories -->
 	<div class="col-md-4 leftCol">
 		<h2>Categories</h2>
-		{% for cat in category %}
+		{% for cat in categories %}
 		<a href="/catalog/{{cat.name}}">
 			<h3>{{ cat.name }}</h3>
-		{% endfor %}
 		</a>
+		{% endfor %}
 	</div>
 
-	<!-- list latest items -->
+	<!-- list items for specific category -->
 	<div class="col-md-8 rightCol">
-		<h2>Latest Items</h2>
-		{% for i in item %}
-		<a href="/catalog/{{i.category.name}}/{{i.name}}">
+		<h2>{{ category.name }}</h2>
+		{% for i in items %}
+		<a href="/catalog/{{category.name}}/{i.name}}">
 			<h3>{{ i.name }}</h3>
 		</a>
 		{% endfor %}
