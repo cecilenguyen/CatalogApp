@@ -64,8 +64,18 @@ def addItem():
     else:
         return render_template('addItem.html')
 
-####### Add routes #######
-
+####### Delete routes #######
+@app.route('/catalog/<path:category>/<path:item>/delete', methods=['GET','POST'])
+def deleteItem(category, item):
+    if request.method == 'POST':
+        category = session.query(Category).filter_by(name=category).first()
+        item = session.query(Item).filter_by(category_id=category.id, name=item).first()
+        session.delete(item)
+        session.commit()
+        flash("Successfully deleted item!")
+        return redirect(url_for('getCatalog'))
+    else:
+        return render_template('deleteItem.html')
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
