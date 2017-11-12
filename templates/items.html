@@ -2,26 +2,29 @@
 {% block content %}
 <!-- main content -->
 <section class="container">
-	<!-- list all categories -->
-	<div class="col-md-4 leftCol">
-		<h2>Categories</h2>
-		{% for cat in categories %}
-		<a href="/catalog/{{cat.name}}">
-			<h3>{{ cat.name }}</h3>
-		</a>
-		{% endfor %}
-	</div>
+	<div class="row">
+		<!-- list all categories -->
+		<div class="col-md-4 leftCol">
+			<h2>Categories</h2>
+			<a href="{{url_for('addCategory')}}"><button type="submit" class="btn btn-primary btn-sm pull-right">+</button></a>
+			{% for cat in categories %}
+			<a href="/catalog/{{cat.name}}">
+				<h3>{{ cat.name }}</h3>
+			</a>
+			{% endfor %}
+		</div>
 
-	<!-- list items for specific category -->
-	<div class="col-md-8 rightCol">
-		<h2>{{ category.name }}</h2>
-		{% for i in items %}
-		<a href="/catalog/{{category.name}}/{i.name}}">
-			<h3>{{ i.name }}</h3>
-		</a>
-		{% endfor %}
+		<!-- list items for specific category -->
+		<div class="col-md-8 rightCol">
+			<h2>{{ category.name }}</h2>
+			<a href="{{url_for('addItem')}}"><button type="submit" class="btn btn-primary btn-sm pull-right">+</button></a>
+			{% for i in items %}
+			<a href="/catalog/{{category.name}}/{i.name}}">
+				<h3>{{ i.name }}</h3>
+			</a>
+			{% endfor %}
+		</div>
 	</div>
-
 </section>
 
 {% endblock %}
