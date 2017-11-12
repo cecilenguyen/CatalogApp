@@ -13,6 +13,17 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# JSON routes to get all categories and all items
+@app.route('/catalog/categories/JSON')
+def getCatalogJSON():
+    categories = session.query(Category)
+    return jsonify(Categories=[cat.serialize for cat in categories])
+
+@app.route('/catalog/items/JSON')
+def getItemsJSON():
+    items = session.query(Item)
+    return jsonify(Items=[i.serialize for i in items])
+
 # homepage
 @app.route('/')
 @app.route('/catalog/')
@@ -53,6 +64,7 @@ def addCategory():
 # add an item
 @app.route('/catalog/addItem', methods=['GET','POST'])
 def addItem():
+    categories = session.query(Category)
     if request.method == 'POST':
         newItem = Item(name = request.form['name'],
                         category = session.query(Category).filter_by(name=request.form['category']).first(),
@@ -62,7 +74,7 @@ def addItem():
         flash("Successfully added item!")
         return redirect(url_for('getCatalog'))
     else:
-        return render_template('addItem.html')
+        return render_template('addItem.html', categories=categories)
 
 ####### Delete routes #######
 # delete a category

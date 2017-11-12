@@ -13,7 +13,11 @@
           <label>Name:</label>
           <input type ="text" class="form-control" name="name">
           <label>Category:</label>
-          <input type ="text" class="form-control" name="category">
+          <select class="form-control" id="sel1">
+            {% for cat in categories %}
+            <option>{{cat.name}}</option>
+            {% endfor %}
+          </select>
           <label>Description:</label>
           <input type ="text" class="form-control" name="description">
         </div>

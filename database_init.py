@@ -89,6 +89,8 @@ session.commit()
 item9 = Item(
 	            name="Jacket",
 	            category_id="3",
-	            description="Chill proof jacket for waiting on the sidelines.")
+	            description="Keeps you warm in the rink.")
 session.add(item9)
 session.commit()
+
+print("Database successfully populated!")
