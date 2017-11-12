@@ -109,9 +109,12 @@ def editItem(category, item, id):
     categories = session.query(Category)
     item = session.query(Item).filter_by(name=item, id=id).first()
     if request.method == 'POST':
-        item.name = request.form['name'],
-        item.category = session.query(Category).filter_by(name=request.form['category']).first(),
-        item.description = request.form['description']
+        if request.form['name']:
+            item.name = request.form['name']
+        if request.form['category']:
+            item.category = session.query(Category).filter_by(name=request.form['category']).first()
+        if request.form['description']:
+            item.description = request.form['description']
         session.add(item)
         session.commit()
         flash("Successfully edited item!")
