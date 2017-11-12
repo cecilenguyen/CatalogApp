@@ -8,7 +8,7 @@
 			<h2>Categories</h2>
 			<a href="{{url_for('addCategory')}}"><button type="submit" class="btn btn-primary btn-sm pull-right">+</button></a>
 			{% for cat in category %}
-			<a href="/catalog/{{cat.name}}">
+			<a href="/catalog/{{cat.name}}/{{cat.id}}">
 				<h3>{{ cat.name }}</h3>
 			{% endfor %}
 			</a>
@@ -18,7 +18,7 @@
 		<div class="col-md-8 rightCol">
 			<h2>Latest Items</h2>
 			{% for i in item %}
-			<a href="/catalog/{{i.category.name}}/{{i.name}}">
+			<a href="/catalog/{{i.category.name}}/{{i.name}}/{{i.id}}">
 				<h3>{{ i.name }}</h3>
 			</a>
 			{% endfor %}

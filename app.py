@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # create flask app
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 app = Flask(__name__)
@@ -33,19 +35,18 @@ def getCatalog():
     return render_template('homepage.html', category=category, item=item)
 
 # get all items for specific category
-@app.route('/catalog/<path:category>')
-def getCategory(category):
+@app.route('/catalog/<path:category>/<int:id>')
+def getCategory(category, id):
     categories = session.query(Category)
-    category = session.query(Category).filter_by(name=category).first()
+    category = session.query(Category).filter_by(name=category, id=id).first()
     items = session.query(Item).filter_by(category_id = category.id)
     return render_template('items.html', categories=categories, category=category, items=items)
 
 # get single item
-@app.route('/catalog/<path:category>/<path:item>')
-def getItem(category, item):
-    category = session.query(Category).filter_by(name=category).first()
-    item = session.query(Item).filter_by(category_id=category.id, name=item).first()
-    return render_template('item.html', category=category, item=item)
+@app.route('/catalog/<path:category>/<path:item>/<int:id>')
+def getItem(category, item, id):
+    item = session.query(Item).filter_by(name=item, id=id).first()
+    return render_template('item.html', item=item)
 
 ####### Add routes #######
 
@@ -77,11 +78,12 @@ def addItem():
         return render_template('addItem.html', categories=categories)
 
 ####### Delete routes #######
+
 # delete a category
-@app.route('/catalog/<path:category>/delete', methods=['GET','POST'])
-def deleteCategory(category):
+@app.route('/catalog/<path:category>/<int:id>/delete', methods=['GET','POST'])
+def deleteCategory(category, id):
     if request.method == 'POST':
-        category = session.query(Category).filter_by(name=category).first()
+        category = session.query(Category).filter_by(name=category, id=id).first()
         session.delete(category)
         session.commit()
         flash("Successfully deleted category!")
@@ -90,17 +92,32 @@ def deleteCategory(category):
         return render_template('deleteItem.html')
 
 # delete an item
-@app.route('/catalog/<path:category>/<path:item>/delete', methods=['GET','POST'])
-def deleteItem(category, item):
+@app.route('/catalog/<path:category>/<path:item>/<int:id>/delete', methods=['GET','POST'])
+def deleteItem(category, item, id):
     if request.method == 'POST':
-        category = session.query(Category).filter_by(name=category).first()
-        item = session.query(Item).filter_by(category_id=category.id, name=item).first()
+        item = session.query(Item).filter_by(name=item, id=id).first()
         session.delete(item)
         session.commit()
         flash("Successfully deleted item!")
         return redirect(url_for('getCatalog'))
     else:
         return render_template('deleteItem.html')
+
+####### Edit routes #######
+@app.route('/catalog/<path:category>/<path:item>/<int:id>/edit', methods=['GET','POST'])
+def editItem(category, item, id):
+    categories = session.query(Category)
+    item = session.query(Item).filter_by(name=item, id=id).first()
+    if request.method == 'POST':
+        item.name = request.form['name'],
+        item.category = session.query(Category).filter_by(name=request.form['category']).first(),
+        item.description = request.form['description']
+        session.add(item)
+        session.commit()
+        flash("Successfully edited item!")
+        return redirect(url_for('getCatalog'))
+    else:
+        return render_template('editItem.html', categories=categories, item=item)
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
