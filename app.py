@@ -65,6 +65,19 @@ def addItem():
         return render_template('addItem.html')
 
 ####### Delete routes #######
+# delete a category
+@app.route('/catalog/<path:category>/delete', methods=['GET','POST'])
+def deleteCategory(category):
+    if request.method == 'POST':
+        category = session.query(Category).filter_by(name=category).first()
+        session.delete(category)
+        session.commit()
+        flash("Successfully deleted category!")
+        return redirect(url_for('getCatalog'))
+    else:
+        return render_template('deleteItem.html')
+
+# delete an item
 @app.route('/catalog/<path:category>/<path:item>/delete', methods=['GET','POST'])
 def deleteItem(category, item):
     if request.method == 'POST':

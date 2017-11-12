@@ -2,26 +2,28 @@
 {% block content %}
 <!-- main content -->
 <section class="container">
-	<!-- list all categories -->
-	<div class="col-md-4 leftCol">
-		<h2>Categories</h2>
-		{% for cat in category %}
-		<a href="/catalog/{{cat.name}}">
-			<h3>{{ cat.name }}</h3>
-		{% endfor %}
-		</a>
-	</div>
+	<div class="row">
+		<!-- list all categories -->
+		<div class="col-md-4 leftCol">
+			<h2 class="in-line">Categories</h2>
+			<a href="{{url_for('addCategory')}}"><button type="submit" class="btn btn-primary btn-sm pull-right">+</button></a>
+			{% for cat in category %}
+			<a href="/catalog/{{cat.name}}">
+				<h3>{{ cat.name }}</h3>
+			{% endfor %}
+			</a>
+		</div>
 
-	<!-- list latest items -->
-	<div class="col-md-8 rightCol">
-		<h2>Latest Items</h2>
-		{% for i in item %}
-		<a href="/catalog/{{i.category.name}}/{{i.name}}">
-			<h3>{{ i.name }}</h3>
-		</a>
-		{% endfor %}
+		<!-- list latest items -->
+		<div class="col-md-8 rightCol">
+			<h2>Latest Items</h2>
+			{% for i in item %}
+			<a href="/catalog/{{i.category.name}}/{{i.name}}">
+				<h3>{{ i.name }}</h3>
+			</a>
+			{% endfor %}
+		</div>
 	</div>
-
 </section>
 
 {% endblock %}
