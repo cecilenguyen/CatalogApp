@@ -104,6 +104,21 @@ def deleteItem(category, item, id):
         return render_template('deleteItem.html')
 
 ####### Edit routes #######
+# edit a category
+@app.route('/catalog/<path:category>/<int:id>/edit', methods=['GET','POST'])
+def editCategory(category, id):
+    category = session.query(Category).filter_by(name=category, id=id).first()
+    if request.method == 'POST':
+        if request.form['name']:
+            category.name = request.form['name']
+        session.add(category)
+        session.commit()
+        flash("Successfully edited category!")
+        return redirect(url_for('getCatalog'))
+    else:
+        return render_template('editCategory.html', category=category)
+
+# edit an item
 @app.route('/catalog/<path:category>/<path:item>/<int:id>/edit', methods=['GET','POST'])
 def editItem(category, item, id):
     categories = session.query(Category)
