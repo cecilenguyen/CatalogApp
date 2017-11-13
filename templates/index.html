@@ -7,36 +7,42 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<link rel="stylesheet" href="style.css">
+<!-- css -->
+<link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
-
 <body>
 <!-- nav bar -->
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-    	<a href="/">
-    		<h1 class="navbar-brand">Catalog App</h1>
-    	</a>
+      <a class="navbar-brand" href="{{url_for('getCatalog')}}">
+        <i class="fa fa-list-alt" aria-hidden="true"></i> Catalog App
+      </a>
     </div>
-    <button class="btn btn-danger navbar-btn pull-right">Login</button>
+    <button class="btn btn-info navbar-btn pull-right">Login</button>
   </div>
 </nav>
 
+<!-- Display flash messages -->
 {% with messages = get_flashed_messages() %}
-	{% if messages %}   
-		<ul>
+	{% if messages %}
 		{% for message in messages %}
-			<li><strong> {{ message }} </strong> </li>
+    <div class="container">
+      <div class="row">
+  			<div class="md-col-12 alert alert-success">
+          <p>{{ message }}</p>
+        </div>
+      </div>
+    </div>
 		{% endfor %}
-		</ul>
 	{% endif %}
 {% endwith %}
 
+<!-- inject templates here -->
 {% block content %}
 {% endblock %}
 
 </body>
-
 </html>

@@ -73,7 +73,8 @@ def addItem():
         session.add(newItem)
         session.commit()
         flash("Successfully added item!")
-        return redirect(url_for('getCatalog'))
+        categoryId = session.query(Category).filter_by(name=request.form['category']).first().id
+        return redirect(url_for('getCategory', category=request.form['category'], id=categoryId))
     else:
         return render_template('addItem.html', categories=categories)
 
@@ -86,6 +87,11 @@ def deleteCategory(category, id):
         category = session.query(Category).filter_by(name=category, id=id).first()
         session.delete(category)
         session.commit()
+        # delete all items under that category as well
+        items = session.query(Item).filter_by(category_id=id)
+        for i in items:
+            session.delete(i)
+            session.commit()
         flash("Successfully deleted category!")
         return redirect(url_for('getCatalog'))
     else:
@@ -99,7 +105,8 @@ def deleteItem(category, item, id):
         session.delete(item)
         session.commit()
         flash("Successfully deleted item!")
-        return redirect(url_for('getCatalog'))
+        categoryId = session.query(Category).filter_by(name=category).first().id
+        return redirect(url_for('getCategory', category=category, id=categoryId))
     else:
         return render_template('deleteItem.html')
 
@@ -133,7 +140,8 @@ def editItem(category, item, id):
         session.add(item)
         session.commit()
         flash("Successfully edited item!")
-        return redirect(url_for('getCatalog'))
+        categoryId = session.query(Category).filter_by(name=request.form['category']).first().id
+        return redirect(url_for('getCategory', category=request.form['category'], id=categoryId))
     else:
         return render_template('editItem.html', categories=categories, item=item)
 

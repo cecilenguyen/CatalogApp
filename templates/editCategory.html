@@ -6,13 +6,18 @@
 		  <h2>Edit Category</h2>
 		</div>
 		<div class="md-col-12 well">
-		  <form method = "post">
-		    <div class="form-group">
-		      <label>Category name:</label>
-		      <input type ="text" class="form-control" name="name" value="{{category.name}}">
-		    </div>
-		    <button type="submit" class="btn btn-primary">Submit</button>
-		  </form>
+		  	<form method="post" class="inline">
+		    	<div class="form-group">
+			      	<label>Category name:</label>
+			      	<input type ="text" class="form-control" name="name" value="{{category.name}}">
+		    	</div>
+		   		<button type="submit" class="btn btn-primary">Submit</button>
+		  	</form>
+		  	<a href="{{url_for('getCatalog')}}">
+				<button type="submit" class="btn btn-primary">
+					Cancel
+				</button>
+			</a>
 		</div>
 	</div>
 </div>

@@ -1,0 +1,29 @@
+/* navbar */
+.navbar-default {
+	background-color: black;
+}
+
+.navbar-default .navbar-brand {
+	color: white;
+}
+
+/* layout for homepage */
+
+.leftCol {
+	float: left;
+}
+
+.rightCol {
+	float: right;
+	border-left: 2px solid #b3b3b3;
+}
+
+/* heading styling */
+.inline {
+	display: inline;
+}
+
+
+button {
+	margin: 3px;
+}

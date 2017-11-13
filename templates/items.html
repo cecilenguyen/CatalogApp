@@ -5,22 +5,38 @@
 	<div class="row">
 		<!-- list all categories -->
 		<div class="col-md-4 leftCol">
-			<h2>Categories</h2>
-			<a href="{{url_for('addCategory')}}"><button type="submit" class="btn btn-primary btn-sm pull-right">+</button></a>
+			<h2 class="inline">Categories</h2>
+			<a href="{{url_for('addCategory')}}">
+				<button type="submit" class="btn btn-primary btn-sm pull-right">+</button>
+			</a>
+			<hr>
 			{% for cat in categories %}
-			<a href="/catalog/{{cat.name}}/{{cat.id}}">
-				<h3>{{ cat.name }}</h3>
+			<a href="{{url_for('getCategory', category=cat.name, id=cat.id)}}">
+				<h4>{{ cat.name }}</h4>
 			</a>
 			{% endfor %}
 		</div>
 
 		<!-- list items for specific category -->
 		<div class="col-md-8 rightCol">
-			<h2>{{ category.name }}</h2>
-			<a href="{{url_for('addItem')}}"><button type="submit" class="btn btn-primary btn-sm pull-right">+</button></a>
+			<h2 class="inline">{{ category.name }} ({{ items.count() }} items)</h2>
+			<a href="{{url_for('deleteCategory', category=category.name, id=category.id)}}">
+				<button type="submit" class="btn btn-danger btn-sm pull-right">
+					<i class="fa fa-trash" aria-hidden="true"></i>
+				</button>
+			</a>
+			<a href="{{url_for('editCategory', category=category.name, id=category.id)}}">
+				<button type="submit" class="btn btn-warning btn-sm pull-right">
+					<i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+				</button>
+			</a>
+			<a href="{{url_for('addItem')}}">
+				<button type="submit" class="btn btn-success btn-sm pull-right">+</button>
+			</a>
+			<hr>
 			{% for i in items %}
-			<a href="/catalog/{{category.name}}/{i.name}}/{{i.id}}">
-				<h3>{{ i.name }}</h3>
+			<a href="{{url_for('getItem', category=i.category.name, item=i.name, id=i.id)}}">
+				<h4>{{ i.name }}</h4>
 			</a>
 			{% endfor %}
 		</div>
