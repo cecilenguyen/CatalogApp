@@ -32,11 +32,14 @@ APPLICATION_NAME = "Catalog App"
 # login
 @app.route('/login')
 def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
+    state = ''.join(
+        random.choice(string.ascii_uppercase + string.digits) for x in range(32))
     login_session['state'] = state
-    return render_template("index.html", STATE=state);
+    # return "The current session state is %s" % login_session['state']
+    return render_template('index.html', STATE=state)
 
-# GConnect route
+# GConnect
+@app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
     if request.args.get('state') != login_session['state']:
@@ -113,10 +116,10 @@ def gconnect():
     login_session['email'] = data['email']
 
     # see if user exists, if it doesn't make a new one
-    user_id = getUserID(login_session['email'])
-    if not user_id:
-        user_id = createUser(login_session)
-    login_session['user_id'] = user_id
+    # user_id = getUserID(login_session['email'])
+    # if not user_id:
+    #     user_id = createUser(login_session)
+    # login_session['user_id'] = user_id
 
     output = ''
     output += '<h1>Welcome, '
@@ -128,7 +131,33 @@ def gconnect():
     flash("you are now logged in as %s" % login_session['username'])
     return output
 
-# Revoke user's token and reset login_session
+# User Helper Functions
+
+
+# def createUser(login_session):
+#     newUser = User(name=login_session['username'], email=login_session[
+#                    'email'], picture=login_session['picture'])
+#     session.add(newUser)
+#     session.commit()
+#     user = session.query(User).filter_by(email=login_session['email']).one()
+#     return user.id
+
+
+# def getUserInfo(user_id):
+#     user = session.query(User).filter_by(id=user_id).one()
+#     return user
+
+
+# def getUserID(email):
+#     try:
+#         user = session.query(User).filter_by(email=email).one()
+#         return user.id
+#     except:
+#         return None
+
+# DISCONNECT - Revoke a current user's token and reset their login_session
+
+
 @app.route('/gdisconnect')
 def gdisconnect():
         # Only disconnect a connected user.
@@ -160,6 +189,7 @@ def gdisconnect():
             json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
+
 
 # JSON routes to get all categories and all items
 @app.route('/catalog/categories/JSON')
