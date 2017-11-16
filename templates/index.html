@@ -24,17 +24,9 @@
         <i class="fa fa-list-alt" aria-hidden="true"></i> Catalog App
       </a>
     </div>
-    <div id="signinButton">
-      <span class="g-signin"
-        data-scope="openid email"
-        data-clientid="816509006111-6gm7tfbuceif6dsfalret46r7vr2pop1.apps.googleusercontent.com"
-        data-redirecturi="postmessage"
-        data-accesstype="offline"
-        data-cookiepolicy="single_host_origin"
-        data-callback="signInCallback"
-        data-approvalprompt="force">
-      </span>
-    </div>
+    <a href='{{url_for("showLogin")}}'>
+      <button class="btn btn-info navbar-btn pull-right">Login</button>
+    </a>
   </div>
 </nav>
 

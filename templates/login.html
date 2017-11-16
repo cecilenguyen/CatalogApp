@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="container">
+  <div class="row">
+
+    <div class="md-col-12">
+      <h2>Login</h2>
+    </div>
+
+    <div class="md-col-12">
+      <div id="signinButton">
+        <span class="g-signin"
+          data-scope="openid email"
+          data-clientid="816509006111-6gm7tfbuceif6dsfalret46r7vr2pop1.apps.googleusercontent.com"
+          data-redirecturi="postmessage"
+          data-accesstype="offline"
+          data-cookiepolicy="single_host_origin"
+          data-callback="signInCallback"
+          data-approvalprompt="force">
+        </span>
+      </div>
+
+      <div id="result"></div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
