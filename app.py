@@ -235,7 +235,8 @@ def addItem():
     if request.method == 'POST':
         newItem = Item(name = request.form['name'],
                         category = session.query(Category).filter_by(name=request.form['category']).first(),
-                        description = request.form['description'])
+                        description = request.form['description'],
+                        user = login_session['user_id'])
         session.add(newItem)
         session.commit()
         flash("Successfully added item!")

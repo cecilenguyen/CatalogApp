@@ -27,6 +27,8 @@ class Item(Base):
     category = relationship(Category)
     date = Column(DateTime, default=datetime.datetime.now())
     description = Column(String(300), nullable = False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User, backref="items")
 
     @property
     def serialize(self):
@@ -36,6 +38,7 @@ class Item(Base):
             'category_id': self.category_id,
             'category': self.category.name,
             'description': self.description
+            'user_id': self.user.name
         }
 
 class User(Base):
