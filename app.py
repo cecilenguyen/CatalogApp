@@ -32,38 +32,45 @@ APPLICATION_NAME = "Catalog App"
 # login
 @app.route('/login')
 def showLogin():
-    state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                   for x in range(32))
+    state = ''.join(
+        random.choice(string.ascii_uppercase + string.digits) for x in range(32))
     login_session['state'] = state
-    return render_template('login.html', STATE = state)
+    # return "The current session state is %s" % login_session['state']
+    return render_template('login.html', STATE=state)
 
 # GConnect
-@app.route('/gconnect', methods = ['POST'])
+@app.route('/gconnect', methods=['POST'])
 def gconnect():
-    # validate state token
-    if request.args.get('state')!= login_session['state']:
+    # Validate state token
+    if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
-        response.headers['Content-Type']= 'application-json'
+        response.headers['Content-Type'] = 'application/json'
         return response
-    # Obtain authorization code
-    code = request.data
+    # Obtain authorization code, now compatible with Python3
+    request.get_data()
+    code = request.data.decode('utf-8')
 
     try:
-        # upgrade the authorization code in credentials object
+        # Upgrade the authorization code into a credentials object
         oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
-        response = make_response(json.dumps('Failed to upgrade the authorization code'), 401)
-        response.headers['Content-Type']= 'application-json'
+        response = make_response(
+            json.dumps('Failed to upgrade the authorization code.'), 401)
+        response.headers['Content-Type'] = 'application/json'
         return response
 
     # Check that the access token is valid.
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
+    # Submit request, parse response - Python3 compatible
     h = httplib2.Http()
-    result = json.loads(h.request(url, 'GET')[1].decode("utf-8"))
+    response = h.request(url, 'GET')[1]
+    str_response = response.decode('utf-8')
+    result = json.loads(str_response)
+
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
@@ -82,32 +89,28 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
-    # Access token within the app
-    stored_credentials = login_session.get('credentials')
+
+    stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
-    if stored_credentials is not None and gplus_id == stored_gplus_id:
+    if stored_access_token is not None and gplus_id == stored_gplus_id:
         response = make_response(json.dumps('Current user is already connected.'),
                                  200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
     # Store the access token in the session for later use.
-
-    login_session['access_token'] = credentials.access_token
+    login_session['access_token'] = access_token
     login_session['gplus_id'] = gplus_id
-    response = make_response(json.dumps('Succesfully connected users', 200))
 
     # Get user info
     userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
-    params = {'access_token': credentials.access_token, 'alt': 'json'}
+    params = {'access_token': access_token, 'alt': 'json'}
     answer = requests.get(userinfo_url, params=params)
 
     data = answer.json()
 
-    login_session['provider'] = 'google'
     login_session['username'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
@@ -152,32 +155,39 @@ def getUserID(email):
     except:
         return None
 
+
 # DISCONNECT - Revoke a current user's token and reset their login_session
+
 
 @app.route('/gdisconnect')
 def gdisconnect():
-    # only disconnect a connected User
+        # Only disconnect a connected user.
     access_token = login_session.get('access_token')
-    print('In gdisconnect access token is %s', access_token)
-    print('User name is: ')
-    print(login_session['username'])
     if access_token is None:
-        print('Access Token is None')
-        response=make_response(json.dumps('Current user not connected'), 401)
-        response.headers['Content-Type']='application/json'
-        return response
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
-    h = httplib2.Http()
-    result = h.request(url, 'GET')[0]
-    print('result is')
-    print(result)
-    if result['status'] == '200':
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response = make_response(
+            json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-    else:
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[0]
+    if result['status'] == '200':
+        # Reset the user's sesson.
+        del login_session['access_token']
+        del login_session['gplus_id']
+        del login_session['username']
+        del login_session['email']
+        del login_session['picture']
 
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        # response = make_response(json.dumps('Successfully disconnected.'), 200)
+        # response.headers['Content-Type'] = 'application/json'
+        response = redirect(url_for('getCatalog'))
+        flash("You are now logged out.")
+        return response
+    else:
+        # For whatever reason, the given token was invalid.
+        response = make_response(
+            json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -220,7 +230,7 @@ def getItem(category, item, id):
 @app.route('/catalog/addCategory', methods=['GET','POST'])
 def addCategory():
     if request.method == 'POST':
-        newCategory = Category(name = request.form['name'])
+        newCategory = Category(name = request.form['name'], user_id=login_session['user_id'])
         session.add(newCategory)
         session.commit()
         flash("Successfully added category!")
@@ -252,6 +262,13 @@ def addItem():
 def deleteCategory(category, id):
     if request.method == 'POST':
         category = session.query(Category).filter_by(name=category, id=id).first()
+        # check if current user is the owner
+        owner = getUserInfo(category.user_id)
+        user = getUserInfo(login_session['user_id'])
+        # if logged in user != owner redirect them
+        if owner.id != user.id:
+            flash ("You do not own this category and cannot delete it.")
+            return redirect(url_for('getCatalog'))
         session.delete(category)
         session.commit()
         # delete all items under that category as well
@@ -269,6 +286,13 @@ def deleteCategory(category, id):
 def deleteItem(category, item, id):
     if request.method == 'POST':
         item = session.query(Item).filter_by(name=item, id=id).first()
+        # check if current user is the owner
+        owner = getUserInfo(item.user_id)
+        user = getUserInfo(login_session['user_id'])
+        # if logged in user != owner redirect them
+        if owner.id != user.id:
+            flash ("You do not own this item and cannot delete it.")
+            return redirect(url_for('getCatalog'))
         session.delete(item)
         session.commit()
         flash("Successfully deleted item!")
@@ -282,6 +306,13 @@ def deleteItem(category, item, id):
 @app.route('/catalog/<path:category>/<int:id>/edit', methods=['GET','POST'])
 def editCategory(category, id):
     category = session.query(Category).filter_by(name=category, id=id).first()
+    # check if current user is the owner
+    owner = getUserInfo(category.user_id)
+    user = getUserInfo(login_session['user_id'])
+    # if logged in user != owner redirect them
+    if owner.id != user.id:
+        flash ("You do not own this category and cannot edit it.")
+        return redirect(url_for('getCatalog'))
     if request.method == 'POST':
         if request.form['name']:
             category.name = request.form['name']
@@ -297,6 +328,13 @@ def editCategory(category, id):
 def editItem(category, item, id):
     categories = session.query(Category)
     item = session.query(Item).filter_by(name=item, id=id).first()
+    # check if current user is the owner
+    owner = getUserInfo(item.user_id)
+    user = getUserInfo(login_session['user_id'])
+    # if logged in user != owner redirect them
+    if owner.id != user.id:
+        flash ("You do not own this item and cannot edit it.")
+        return redirect(url_for('getCatalog'))
     if request.method == 'POST':
         if request.form['name']:
             item.name = request.form['name']
