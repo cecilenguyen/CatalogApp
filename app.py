@@ -228,7 +228,7 @@ def getItem(category, item, id):
 @app.route('/catalog/addCategory', methods=['GET','POST'])
 def addCategory():
     if request.method == 'POST':
-        newCategory = Category(name = request.form['name'], user_id=login_session['user_id'])
+        newCategory = Category(name = request.form['name'], user=getUserInfo(login_session['user_id'])
         session.add(newCategory)
         session.commit()
         flash("Successfully added category!")
@@ -244,7 +244,7 @@ def addItem():
         newItem = Item(name = request.form['name'],
                         category = session.query(Category).filter_by(name=request.form['category']).first(),
                         description = request.form['description'],
-                        user = login_session['user_id'])
+                        user = getUserInfo(login_session['user_id']))
         session.add(newItem)
         session.commit()
         flash("Successfully added item!")
