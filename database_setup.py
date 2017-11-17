@@ -27,7 +27,7 @@ class Category(Base):
     __tablename__ = 'category'
     id = Column(Integer, primary_key = True)
     name = Column(String(100), nullable = False)
-    user_id = Column(Integer, ForeignKey('user.id'), default=-1)
+    user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
     @property
@@ -35,7 +35,8 @@ class Category(Base):
         return {
             'id': self.id,
             'name': self.name,
-            'user': self.user_id
+            'user': self.user.name,
+            'user_id' : self.user_id
         }
 
 class Item(Base):
@@ -46,7 +47,7 @@ class Item(Base):
     category = relationship(Category)
     date = Column(DateTime, default=datetime.datetime.now())
     description = Column(String(300), nullable = False)
-    user_id = Column(Integer, ForeignKey('user.id'), default=-1)
+    user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
     @property
@@ -57,7 +58,8 @@ class Item(Base):
             'category_id': self.category_id,
             'category': self.category.name,
             'description': self.description,
-            'user': self.user_id
+            'user': self.user.name,
+            'user_id' : self.user_id
         }
 
 engine = create_engine('sqlite:///catalog.db')

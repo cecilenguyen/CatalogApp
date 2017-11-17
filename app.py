@@ -200,6 +200,11 @@ def getItemsJSON():
     items = session.query(Item)
     return jsonify(Items=[i.serialize for i in items])
 
+@app.route('/catalog/users/JSON')
+def getUsersJSON():
+    users = session.query(User)
+    return jsonify(Users=[u.serialize for u in users])
+
 # homepage
 @app.route('/')
 @app.route('/catalog')
@@ -228,7 +233,7 @@ def getItem(category, item, id):
 @app.route('/catalog/addCategory', methods=['GET','POST'])
 def addCategory():
     if request.method == 'POST':
-        newCategory = Category(name = request.form['name'], user=getUserInfo(login_session['user_id'])
+        newCategory = Category(name = request.form['name'], user=getUserInfo(login_session['user_id']))
         session.add(newCategory)
         session.commit()
         flash("Successfully added category!")
