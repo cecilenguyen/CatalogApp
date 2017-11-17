@@ -6,9 +6,11 @@
 		<!-- list all categories -->
 		<div class="col-md-4 leftCol">
 			<h2 class="inline">Categories</h2>
+			{% if 'username' in session %}
 			<a href="{{url_for('addCategory')}}">
 				<button type="submit" class="btn btn-primary btn-sm pull-right">+</button>
 			</a>
+			{% endif %}
 			<hr>
 			{% for cat in categories %}
 			<a href="{{url_for('getCategory', category=cat.name, id=cat.id)}}">
@@ -20,6 +22,7 @@
 		<!-- list items for specific category -->
 		<div class="col-md-8 rightCol">
 			<h2 class="inline">{{ category.name }} ({{ items.count() }} items)</h2>
+			{% if 'username' in session %}
 			<a href="{{url_for('deleteCategory', category=category.name, id=category.id)}}">
 				<button type="submit" class="btn btn-danger btn-sm pull-right">
 					<i class="fa fa-trash" aria-hidden="true"></i>
@@ -33,6 +36,7 @@
 			<a href="{{url_for('addItem')}}">
 				<button type="submit" class="btn btn-success btn-sm pull-right">+</button>
 			</a>
+			{% endif %}
 			<hr>
 			{% for i in items %}
 			<a href="{{url_for('getItem', category=i.category.name, item=i.name, id=i.id)}}">

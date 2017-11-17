@@ -24,9 +24,15 @@
         <i class="fa fa-list-alt" aria-hidden="true"></i> Catalog App
       </a>
     </div>
+    {% if 'username' not in session %}
     <a href='{{url_for("showLogin")}}'>
       <button class="btn btn-info navbar-btn pull-right">Login</button>
     </a>
+    {% else %}
+    <a href="{{url_for('gdisconnect')}}">
+      <button type="button" class="btn btn-info navbar-btn pull-right">Logout</button>
+    </a>
+    {% endif %}
   </div>
 </nav>
 

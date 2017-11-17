@@ -7,6 +7,7 @@
 		<div class="md-col-12">
 			<h2>{{ item.name }}</h2>
 			<hr>
+			{% if 'username' in session %}
 			<!-- delete button -->
 			<a href="{{url_for('deleteItem', category=item.category.name, item=item.name, id=item.id)}}">
 				<button type="submit" class="btn btn-danger btn-sm pull-right">
@@ -21,6 +22,7 @@
 					Edit
 				</button>
 			</a>
+			{% endif %}
 			<p>{{ item.description }}</p>
 			<br>
 			<a href="{{url_for('getCatalog')}}">

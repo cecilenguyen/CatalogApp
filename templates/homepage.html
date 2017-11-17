@@ -6,7 +6,9 @@
 		<!-- list all categories -->
 		<div class="col-md-4 leftCol">
 			<h2 class="inline">Categories</h2>
+			{% if 'username' in session %}
 			<a href="{{url_for('addCategory')}}"><button type="submit" class="btn btn-primary btn-sm pull-right">+</button></a>
+			{% endif %}
 			<hr>
 			{% for cat in category %}
 			<a href="{{url_for('getCategory', category=cat.name, id=cat.id)}}">
