@@ -35,6 +35,8 @@ This will create a new file for you called catalog.db.
 
 `python3 app.py`
 
+You should now be able to access the application from http://localhost:8000
+
 ## Copyright and License
 
 Google authentication code provided by Udacity
