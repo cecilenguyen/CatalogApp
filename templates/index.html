@@ -72,7 +72,7 @@
   </script>
 
   <!-- Display flash messages -->
-  {% with messages = get_flashed_messages(with_categories=true) %}}
+  {% with messages = get_flashed_messages(with_categories=true) %}
   	{% if messages %}
   		{% for category, message in messages %}
       <div class="container">
@@ -85,7 +85,7 @@
   		{% endfor %}
   	{% endif %}
   {% endwith %}
-  
+
 <!-- inject templates here -->
 {% block content %}
 {% endblock %}

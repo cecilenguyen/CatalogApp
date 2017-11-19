@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 
 # create flask app
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request
+from flask import redirect, url_for, flash, jsonify
 
 # login imports
 from flask import session as login_session
-import random, string, requests, httplib2, json
+import random
+import string
+import requests
+import httplib2
+import json
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 from flask import make_response
@@ -28,17 +33,22 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Catalog App"
 
-######### Google authentication routes #########
+# ========== Google authentication routes ========== #
 # login
+
+
 @app.route('/login')
 def showLogin():
     state = ''.join(
-        random.choice(string.ascii_uppercase + string.digits) for x in range(32))
+        random.choice(string.ascii_uppercase + string.digits)
+        for x in range(32))
     login_session['state'] = state
     # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
 # GConnect
+
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -95,8 +105,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(json.dumps(
+            'Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -127,14 +137,20 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'], "success")
+    output += ' " style = "width: 300px; height: 300px;'
+    output += 'border-radius: 150px;-webkit-border-radius: 150px;'
+    output += '-moz-border-radius: 150px;"> '
+    flash("You are now logged in as %s" % login_session['username'], "success")
     return output
 
 # User Helper Functions
 
+
 def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session['email'], picture=login_session['picture'])
+    newUser = User(
+        name=login_session['username'],
+        email=login_session['email'],
+        picture=login_session['picture'])
     session.add(newUser)
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
@@ -175,8 +191,6 @@ def gdisconnect():
         del login_session['email']
         del login_session['picture']
 
-        # response = make_response(json.dumps('Successfully disconnected.'), 200)
-        # response.headers['Content-Type'] = 'application/json'
         response = redirect(url_for('getCatalog'))
         flash("You are now logged out.", "success")
         return response
@@ -187,24 +201,30 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-######### JSON routes to get all categories, items, users #########
+# ========== JSON routes to get all categories, items, users ========== #
+
+
 @app.route('/catalog/categories/JSON')
 def getCatalogJSON():
     categories = session.query(Category)
     return jsonify(Categories=[cat.serialize for cat in categories])
+
 
 @app.route('/catalog/items/JSON')
 def getItemsJSON():
     items = session.query(Item)
     return jsonify(Items=[i.serialize for i in items])
 
+
 @app.route('/catalog/users/JSON')
 def getUsersJSON():
     users = session.query(User)
     return jsonify(Users=[u.serialize for u in users])
 
-######### Application routes #########
+# ========== Application routes ========== #
 # homepage
+
+
 @app.route('/')
 @app.route('/catalog')
 def getCatalog():
@@ -213,25 +233,35 @@ def getCatalog():
     return render_template('homepage.html', category=category, item=item)
 
 # get all items for specific category
+
+
 @app.route('/catalog/<path:category>/<int:id>')
 def getCategory(category, id):
     categories = session.query(Category)
     category = session.query(Category).filter_by(name=category, id=id).first()
-    items = session.query(Item).filter_by(category_id = category.id)
-    return render_template('items.html', categories=categories, category=category, items=items)
+    items = session.query(Item).filter_by(category_id=category.id)
+    return render_template(
+        'items.html', categories=categories,
+        category=category, items=items)
 
 # get single item
+
+
 @app.route('/catalog/<path:category>/<path:item>/<int:id>')
 def getItem(category, item, id):
     item = session.query(Item).filter_by(name=item, id=id).first()
     return render_template('item.html', item=item)
 
-####### Add routes #######
+# ========== Add routes ========== #
 # add a category
-@app.route('/catalog/addCategory', methods=['GET','POST'])
+
+
+@app.route('/catalog/addCategory', methods=['GET', 'POST'])
 def addCategory():
     if request.method == 'POST':
-        newCategory = Category(name = request.form['name'], user=getUserInfo(login_session['user_id']))
+        newCategory = Category(
+            name=request.form['name'],
+            user=getUserInfo(login_session['user_id']))
         session.add(newCategory)
         session.commit()
         flash("Successfully added category!", "success")
@@ -240,34 +270,47 @@ def addCategory():
         return render_template('addCategory.html')
 
 # add an item
-@app.route('/catalog/addItem', methods=['GET','POST'])
+
+
+@app.route('/catalog/addItem', methods=['GET', 'POST'])
 def addItem():
     categories = session.query(Category)
     if request.method == 'POST':
-        newItem = Item(name = request.form['name'],
-                        category = session.query(Category).filter_by(name=request.form['category']).first(),
-                        description = request.form['description'],
-                        user = getUserInfo(login_session['user_id']))
+        newItem = Item(
+            name=request.form['name'],
+            category=session.query(Category).filter_by(
+                name=request.form['category']).first(),
+            description=request.form['description'],
+            user=getUserInfo(login_session['user_id']))
         session.add(newItem)
         session.commit()
         flash("Successfully added item!", "success")
-        categoryId = session.query(Category).filter_by(name=request.form['category']).first().id
-        return redirect(url_for('getCategory', category=request.form['category'], id=categoryId))
+        categoryId = session.query(Category).filter_by(
+            name=request.form['category']).first().id
+        return redirect(
+            url_for(
+                'getCategory',
+                category=request.form['category'],
+                id=categoryId))
     else:
         return render_template('addItem.html', categories=categories)
 
-####### Delete routes #######
+# ========== Delete routes ========== #
 # delete a category
-@app.route('/catalog/<path:category>/<int:id>/delete', methods=['GET','POST'])
+
+
+@app.route('/catalog/<path:category>/<int:id>/delete', methods=['GET', 'POST'])
 def deleteCategory(category, id):
     if request.method == 'POST':
-        category = session.query(Category).filter_by(name=category, id=id).first()
+        category = session.query(Category).filter_by(
+            name=category, id=id).first()
         # check if current user is the owner
         owner = getUserInfo(category.user_id)
         user = getUserInfo(login_session['user_id'])
         # if logged in user != owner redirect them
         if owner.id != user.id:
-            flash("You do not own this category and cannot delete it.", "danger")
+            flash(
+                "You do not own this category and cannot delete it.", "danger")
             return redirect(url_for('getCatalog'))
         session.delete(category)
         session.commit()
@@ -282,7 +325,11 @@ def deleteCategory(category, id):
         return render_template('deleteItem.html')
 
 # delete an item
-@app.route('/catalog/<path:category>/<path:item>/<int:id>/delete', methods=['GET','POST'])
+
+
+@app.route(
+    '/catalog/<path:category>/<path:item>/<int:id>/delete',
+    methods=['GET', 'POST'])
 def deleteItem(category, item, id):
     if request.method == 'POST':
         item = session.query(Item).filter_by(name=item, id=id).first()
@@ -296,14 +343,18 @@ def deleteItem(category, item, id):
         session.delete(item)
         session.commit()
         flash("Successfully deleted item!", "success")
-        categoryId = session.query(Category).filter_by(name=category).first().id
-        return redirect(url_for('getCategory', category=category, id=categoryId))
+        categoryId = session.query(Category).filter_by(
+            name=category).first().id
+        return redirect(
+            url_for('getCategory', category=category, id=categoryId))
     else:
         return render_template('deleteItem.html')
 
-####### Edit routes #######
+# ========== Edit routes ========== #
 # edit a category
-@app.route('/catalog/<path:category>/<int:id>/edit', methods=['GET','POST'])
+
+
+@app.route('/catalog/<path:category>/<int:id>/edit', methods=['GET', 'POST'])
 def editCategory(category, id):
     category = session.query(Category).filter_by(name=category, id=id).first()
     # check if current user is the owner
@@ -324,7 +375,11 @@ def editCategory(category, id):
         return render_template('editCategory.html', category=category)
 
 # edit an item
-@app.route('/catalog/<path:category>/<path:item>/<int:id>/edit', methods=['GET','POST'])
+
+
+@app.route(
+    '/catalog/<path:category>/<path:item>/<int:id>/edit',
+    methods=['GET', 'POST'])
 def editItem(category, item, id):
     categories = session.query(Category)
     item = session.query(Item).filter_by(name=item, id=id).first()
@@ -339,18 +394,23 @@ def editItem(category, item, id):
         if request.form['name']:
             item.name = request.form['name']
         if request.form['category']:
-            item.category = session.query(Category).filter_by(name=request.form['category']).first()
+            item.category = session.query(Category).filter_by(
+                name=request.form['category']).first()
         if request.form['description']:
             item.description = request.form['description']
         session.add(item)
         session.commit()
         flash("Successfully edited item!", "success")
-        categoryId = session.query(Category).filter_by(name=request.form['category']).first().id
-        return redirect(url_for('getCategory', category=request.form['category'], id=categoryId))
+        categoryId = session.query(Category).filter_by(
+            name=request.form['category']).first().id
+        return redirect(url_for(
+            'getCategory',
+            category=request.form['category'], id=categoryId))
     else:
-        return render_template('editItem.html', categories=categories, item=item)
+        return render_template(
+            'editItem.html', categories=categories, item=item)
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
     app.debug = True
-    app.run(host = '0.0.0.0', port = 5000)
+    app.run(host='0.0.0.0', port=8000)
