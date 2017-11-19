@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 from sqlalchemy import Column, ForeignKey, Integer, DateTime, String
 from sqlalchemy.ext.declarative import declarative_base

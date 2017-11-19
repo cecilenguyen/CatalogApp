@@ -4,6 +4,7 @@
 
 <div class="container">
 	<div class="row">
+		<!-- title -->
 		<div class="md-col-12">
 			<h2>{{ item.name }}</h2>
 			<hr>
@@ -23,8 +24,10 @@
 				</button>
 			</a>
 			{% endif %}
+			<!-- item info -->
 			<p>{{ item.description }}</p>
 			<br>
+			<!-- back button -->
 			<a href="{{url_for('getCatalog')}}">
 				<button type="submit" class="btn btn-primary btn-sm">
 					<i class="fa fa-arrow-left" aria-hidden="true"></i>

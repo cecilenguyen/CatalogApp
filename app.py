@@ -10,7 +10,6 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 from flask import make_response
 
-
 # add database to application
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
@@ -29,6 +28,7 @@ CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Catalog App"
 
+######### Google authentication routes #########
 # login
 @app.route('/login')
 def showLogin():
@@ -128,7 +128,7 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("you are now logged in as %s" % login_session['username'], "success")
     return output
 
 # User Helper Functions
@@ -154,12 +154,10 @@ def getUserID(email):
         return None
 
 
-# DISCONNECT - Revoke a current user's token and reset their login_session
-
-
+# disconnect, revoke a current user's token and reset their login_session
 @app.route('/gdisconnect')
 def gdisconnect():
-        # Only disconnect a connected user.
+    # Only disconnect a connected user.
     access_token = login_session.get('access_token')
     if access_token is None:
         response = make_response(
@@ -180,7 +178,7 @@ def gdisconnect():
         # response = make_response(json.dumps('Successfully disconnected.'), 200)
         # response.headers['Content-Type'] = 'application/json'
         response = redirect(url_for('getCatalog'))
-        flash("You are now logged out.")
+        flash("You are now logged out.", "success")
         return response
     else:
         # For whatever reason, the given token was invalid.
@@ -189,7 +187,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
-# JSON routes to get all categories and all items
+######### JSON routes to get all categories, items, users #########
 @app.route('/catalog/categories/JSON')
 def getCatalogJSON():
     categories = session.query(Category)
@@ -205,6 +203,7 @@ def getUsersJSON():
     users = session.query(User)
     return jsonify(Users=[u.serialize for u in users])
 
+######### Application routes #########
 # homepage
 @app.route('/')
 @app.route('/catalog')
@@ -228,7 +227,6 @@ def getItem(category, item, id):
     return render_template('item.html', item=item)
 
 ####### Add routes #######
-
 # add a category
 @app.route('/catalog/addCategory', methods=['GET','POST'])
 def addCategory():
@@ -236,7 +234,7 @@ def addCategory():
         newCategory = Category(name = request.form['name'], user=getUserInfo(login_session['user_id']))
         session.add(newCategory)
         session.commit()
-        flash("Successfully added category!")
+        flash("Successfully added category!", "success")
         return redirect(url_for('getCatalog'))
     else:
         return render_template('addCategory.html')
@@ -252,14 +250,13 @@ def addItem():
                         user = getUserInfo(login_session['user_id']))
         session.add(newItem)
         session.commit()
-        flash("Successfully added item!")
+        flash("Successfully added item!", "success")
         categoryId = session.query(Category).filter_by(name=request.form['category']).first().id
         return redirect(url_for('getCategory', category=request.form['category'], id=categoryId))
     else:
         return render_template('addItem.html', categories=categories)
 
 ####### Delete routes #######
-
 # delete a category
 @app.route('/catalog/<path:category>/<int:id>/delete', methods=['GET','POST'])
 def deleteCategory(category, id):
@@ -270,7 +267,7 @@ def deleteCategory(category, id):
         user = getUserInfo(login_session['user_id'])
         # if logged in user != owner redirect them
         if owner.id != user.id:
-            flash ("You do not own this category and cannot delete it.")
+            flash("You do not own this category and cannot delete it.", "danger")
             return redirect(url_for('getCatalog'))
         session.delete(category)
         session.commit()
@@ -279,7 +276,7 @@ def deleteCategory(category, id):
         for i in items:
             session.delete(i)
             session.commit()
-        flash("Successfully deleted category!")
+        flash("Successfully deleted category!", "success")
         return redirect(url_for('getCatalog'))
     else:
         return render_template('deleteItem.html')
@@ -294,11 +291,11 @@ def deleteItem(category, item, id):
         user = getUserInfo(login_session['user_id'])
         # if logged in user != owner redirect them
         if owner.id != user.id:
-            flash ("You do not own this item and cannot delete it.")
+            flash("You do not own this item and cannot delete it.", "danger")
             return redirect(url_for('getCatalog'))
         session.delete(item)
         session.commit()
-        flash("Successfully deleted item!")
+        flash("Successfully deleted item!", "success")
         categoryId = session.query(Category).filter_by(name=category).first().id
         return redirect(url_for('getCategory', category=category, id=categoryId))
     else:
@@ -314,14 +311,14 @@ def editCategory(category, id):
     user = getUserInfo(login_session['user_id'])
     # if logged in user != owner redirect them
     if owner.id != user.id:
-        flash ("You do not own this category and cannot edit it.")
+        flash("You do not own this category and cannot edit it.", "danger")
         return redirect(url_for('getCatalog'))
     if request.method == 'POST':
         if request.form['name']:
             category.name = request.form['name']
         session.add(category)
         session.commit()
-        flash("Successfully edited category!")
+        flash("Successfully edited category!", "success")
         return redirect(url_for('getCatalog'))
     else:
         return render_template('editCategory.html', category=category)
@@ -336,7 +333,7 @@ def editItem(category, item, id):
     user = getUserInfo(login_session['user_id'])
     # if logged in user != owner redirect them
     if owner.id != user.id:
-        flash ("You do not own this item and cannot edit it.")
+        flash("You do not own this item and cannot edit it.", "danger")
         return redirect(url_for('getCatalog'))
     if request.method == 'POST':
         if request.form['name']:
@@ -347,7 +344,7 @@ def editItem(category, item, id):
             item.description = request.form['description']
         session.add(item)
         session.commit()
-        flash("Successfully edited item!")
+        flash("Successfully edited item!", "success")
         categoryId = session.query(Category).filter_by(name=request.form['category']).first().id
         return redirect(url_for('getCategory', category=request.form['category'], id=categoryId))
     else:

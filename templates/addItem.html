@@ -3,11 +3,11 @@
 {% if 'username' in session %}
 <div class="container">
   <div class="row">
-
+    <!-- title -->
     <div class="md-col-12">
       <h2>Add item</h2>
     </div>
-
+    <<!-- form to add item -->
     <div class="md-col-12 well">
       <form method="post" class="inline">
         <div class="form-group">
@@ -34,10 +34,11 @@
   </div>
 </div>
 {% else %}
+<!-- redirect to home page if user not logged in -->
 <div class="container">
   <div class="row">
     <div class="md-col-12 alert alert-danger">
-          <strong>Not logged in!</strong> Please sign in to perform this action.
+          <p><strong>Not logged in!</strong> Please sign in to perform this action.</p>
           <br>
           <a href ='{{url_for("getCatalog")}}'>
             <button type="submit" class="btn btn-danger"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back</button>

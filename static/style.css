@@ -7,11 +7,6 @@
 	color: white;
 }
 
-#signinButton {
-	float: right;
-	padding: 7px;
-}
-
 /* layout for homepage */
 
 .leftCol {
@@ -23,12 +18,12 @@
 	border-left: 2px solid #b3b3b3;
 }
 
-/* heading styling */
+/* styling so buttons can appear next to headings */
 .inline {
 	display: inline;
 }
 
-
+/* button spacing */
 button {
 	margin: 3px;
 }

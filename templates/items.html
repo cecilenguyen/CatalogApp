@@ -3,7 +3,7 @@
 <!-- main content -->
 <section class="container">
 	<div class="row">
-		<!-- list all categories -->
+		<!-- list all categories on left column -->
 		<div class="col-md-4 leftCol">
 			<h2 class="inline">Categories</h2>
 			{% if 'username' in session %}
@@ -19,7 +19,7 @@
 			{% endfor %}
 		</div>
 
-		<!-- list items for specific category -->
+		<!-- list items for specific category on right side-->
 		<div class="col-md-8 rightCol">
 			<h2 class="inline">{{ category.name }} ({{ items.count() }} items)</h2>
 			{% if 'username' in session %}
